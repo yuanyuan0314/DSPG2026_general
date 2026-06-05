@@ -143,16 +143,14 @@
       <div class="card">
         <h3>Create www/ and data/ folders manually</h3>
         <p style="font-size:13px;color:var(--ink2);margin-bottom:10px;">These folders won't be created automatically — you need to make them yourself inside the <code style="font-family:'DM Mono',monospace;">ShinyApp/</code> folder.</p>
-        <div class="structure">
-<span class="folder">your-repo/</span>
+        <div class="structure" style="white-space:pre;overflow-x:auto;"><span class="folder">your-repo/</span>
 ├── <span class="folder">ShinyApp/</span>
 │   ├── <span class="file-c">app.R</span>
-│   ├── <span class="folder">www/</span>       <span class="cm"># images go here</span>
+│   ├── <span class="folder">www/</span>          <span class="cm"># images go here</span>
 │   │   └── <span class="file-c">plot1.png</span>
-│   └── <span class="folder">data/</span>      <span class="cm"># data files go here</span>
+│   └── <span class="folder">data/</span>         <span class="cm"># data files go here</span>
 │       └── <span class="file-c">mydata.csv</span>
-└── <span class="file-c">.gitignore</span>
-        </div>
+└── <span class="file-c">.gitignore</span></div>
         <p class="tip">To ignore data files from GitHub, add <code style="font-family:'DM Mono',monospace;">ShinyApp/data/</code> to your <code style="font-family:'DM Mono',monospace;">.gitignore</code>.</p>
       </div>
     </div>
