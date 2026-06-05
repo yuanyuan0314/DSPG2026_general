@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git + R Shiny Quick Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #FAF8F6;
+    --surface: #FFFFFF;
+    --ink: #1A1210;
+    --ink2: #5C4F4A;
+    --ink3: #A0948E;
+    --accent: #E5751F;
+    --accent2: #861F41;
+    --border: #E8DDD8;
+    --code-bg: #F5F0ED;
+    --code-fg: #2A1F1A;
+    --code-cm: #A89088;
+    --code-kw: #861F41;
+    --code-str: #8A4A00;
+    --tag-git: #FEF2EB;
+    --tag-git-text: #8A3800;
+    --tag-r: #F9EEF1;
+    --tag-r-text: #6B1830;
+  }
+
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; padding: 48px 24px 80px; }
+  .page { max-width: 860px; margin: 0 auto; }
+  header { margin-bottom: 48px; }
+
+  .eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink3); margin-bottom: 12px; }
+
+  h1 { font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(32px, 5vw, 52px); line-height: 1.1; color: var(--ink); margin-bottom: 8px; }
+  h1 em { font-style: italic; color: #E5751F; }
+
+  .subtitle { font-size: 15px; color: var(--ink2); line-height: 1.6; }
+
+  .divider { height: 2px; background: linear-gradient(to right, #E5751F, #861F41); margin: 32px 0; border-radius: 2px; opacity: 0.25; }
+
+  .section { margin-bottom: 40px; }
+  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .section-num { font-family: 'Fraunces', serif; font-style: italic; font-size: 13px; color: #861F41; min-width: 20px; }
+
+  h2 { font-family: 'Fraunces', serif; font-weight: 600; font-size: 22px; color: var(--ink); }
+
+  .tag { font-family: 'DM Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; }
+  .tag-git { background: var(--tag-git); color: var(--tag-git-text); }
+  .tag-r   { background: var(--tag-r);   color: var(--tag-r-text); }
+
+  .cards { display: grid; gap: 12px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; }
+  .card-title { font-size: 13px; font-weight: 500; color: var(--ink2); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+
+  .step-badge { font-family: 'DM Mono', monospace; font-size: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; color: var(--ink3); }
+
+  .card h3 { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 10px; }
+
+  pre { background: var(--code-bg); border-radius: 8px; padding: 14px 16px; font-family: 'DM Mono', monospace; font-size: 12.5px; line-height: 1.75; color: var(--code-fg); overflow-x: auto; margin: 8px 0; }
+
+  .cm { color: var(--code-cm); }
+  .kw { color: var(--code-kw); }
+  .st { color: var(--code-str); }
+
+  .tip { margin-top: 10px; font-size: 13px; color: var(--ink2); padding-left: 12px; border-left: 2px solid var(--border); line-height: 1.6; }
+  .tip strong { color: var(--ink); font-weight: 500; }
+
+  .web-note { background: #FEF6F1; border: 1px solid #F2D4C0; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #5C2800; margin-top: 8px; line-height: 1.8; }
+
+  .flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+  .flow-item { font-family: 'DM Mono', monospace; font-size: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; color: var(--ink); }
+  .flow-arrow { font-size: 14px; color: var(--ink3); }
+
+  .structure { font-family: 'DM Mono', monospace; font-size: 12.5px; color: var(--code-fg); background: var(--code-bg); border-radius: 8px; padding: 14px 16px; line-height: 1.8; margin: 8px 0; }
+  .folder { color: var(--code-kw); }
+  .file-c { color: var(--code-str); }
+
+  .or-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
+  .or-line { flex: 1; height: 1px; background: var(--border); }
+  .or-text { font-size: 11px; color: var(--ink3); font-family: 'DM Mono', monospace; }
+
+  footer { margin-top: 60px; text-align: center; font-size: 12px; color: var(--ink3); font-family: 'DM Mono', monospace; }
+
+  @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+      <div style="width:6px;height:48px;background:linear-gradient(to bottom,#E5751F,#861F41);border-radius:3px;"></div>
+      <div>
+        <p class="eyebrow" style="color:#E5751F;">Virginia Tech · Quick Reference</p>
+        <p style="font-size:12px;color:var(--ink3);font-family:'DM Mono',monospace;margin-top:4px;">Yuanyuan Wen</p>
+      </div>
+    </div>
+    <h1>Git + <em>R Shiny</em></h1>
+    <p class="subtitle">A step-by-step guide to setting up your project, building a Shiny dashboard, and collaborating with GitHub.</p>
+  </header>
+
+  <div class="divider"></div>
+
+  <!-- STEP 1: CLONE IN RSTUDIO -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>Pull the repo into RStudio</h2>
+      <span class="tag tag-r">RStudio</span>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <p style="font-size:14px;color:var(--ink2);line-height:1.7;margin-bottom:14px;">Instead of using the terminal, you can clone a GitHub repo directly inside RStudio by creating a new project.</p>
+        <div class="web-note">
+          1. In RStudio: <strong>File → New Project → Version Control → Git</strong><br>
+          2. Paste your GitHub repo URL (e.g. <code style="font-family:'DM Mono',monospace;">https://github.com/username/repo.git</code>)<br>
+          3. Choose a local folder → click <strong>Create Project</strong>
+        </div>
+        <p class="tip" style="margin-top:10px;">This clones the repo <strong>and</strong> opens it as an RStudio project in one step. The Git tab will appear in the top-right panel.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: FOLDER SETUP -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>Create your Shiny app and folders</h2>
+      <span class="tag tag-r">R</span>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <h3>Create the Shiny app file</h3>
+        <div class="web-note">
+          In RStudio: <strong>File → New File → Shiny Web App</strong><br>
+          Set the folder to <code style="font-family:'DM Mono',monospace;">ShinyApp/</code> inside your project
+        </div>
+        <p class="tip" style="margin-top:10px;">This creates a <code style="font-family:'DM Mono',monospace;">ShinyApp/app.R</code> file with a basic template already inside.</p>
+      </div>
+      <div class="card">
+        <h3>Create www/ and data/ folders manually</h3>
+        <p style="font-size:13px;color:var(--ink2);margin-bottom:10px;">These folders won't be created automatically — you need to make them yourself inside the <code style="font-family:'DM Mono',monospace;">ShinyApp/</code> folder.</p>
+        <div class="structure">
+<span class="folder">your-repo/</span>
+├── <span class="folder">ShinyApp/</span>
+│   ├── <span class="file-c">app.R</span>
+│   ├── <span class="folder">www/</span>       <span class="cm"># images go here</span>
+│   │   └── <span class="file-c">plot1.png</span>
+│   └── <span class="folder">data/</span>      <span class="cm"># data files go here</span>
+│       └── <span class="file-c">mydata.csv</span>
+└── <span class="file-c">.gitignore</span>
+        </div>
+        <p class="tip">To ignore data files from GitHub, add <code style="font-family:'DM Mono',monospace;">ShinyApp/data/</code> to your <code style="font-family:'DM Mono',monospace;">.gitignore</code>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- STEP 3: SHINY CODE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>Build your app — v1 to v5</h2>
+      <span class="tag tag-r">R</span>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <h3>v1 — skeleton</h3>
+        <pre><span class="kw">library</span>(shiny)
+
+ui &lt;- <span class="kw">navbarPage</span>(<span class="st">"My App"</span>)
+
+server &lt;- <span class="kw">function</span>(input, output) {}
+
+<span class="kw">shinyApp</span>(ui, server)</pre>
+      </div>
+
+      <div class="card">
+        <h3>v2 — add a page with a title</h3>
+        <pre>ui &lt;- <span class="kw">navbarPage</span>(<span class="st">"My App"</span>,
+  <span class="kw">tabPanel</span>(<span class="st">"Overview"</span>,
+    <span class="kw">h3</span>(<span class="st">"Daylighting"</span>, style = <span class="st">"text-align:center; color:#861F41;"</span>)
+  )
+)</pre>
+        <p class="tip">All four pages follow the same pattern: <code style="font-family:'DM Mono',monospace;">tabPanel("Page Name", ...content...)</code> separated by commas inside <code style="font-family:'DM Mono',monospace;">navbarPage()</code>.</p>
+      </div>
+
+      <div class="card">
+        <h3>v3 — three-column text layout</h3>
+        <pre><span class="kw">fluidRow</span>(           <span class="cm"># columns inside always add up to 12</span>
+  <span class="kw">column</span>(4, <span class="kw">h3</span>(<span class="st">"Col 1"</span>), <span class="kw">p</span>(<span class="st">"text..."</span>)),
+  <span class="kw">column</span>(4, <span class="kw">h3</span>(<span class="st">"Col 2"</span>), <span class="kw">p</span>(<span class="st">"text..."</span>)),
+  <span class="kw">column</span>(4, <span class="kw">h3</span>(<span class="st">"Col 3"</span>), <span class="kw">p</span>(<span class="st">"text..."</span>))
+)</pre>
+        <p class="tip">4+4+4 = 12 (three equal columns). Use 6+6 for two, 3+9 for unequal.</p>
+      </div>
+
+      <div class="card">
+        <h3>v4 — multiple paragraphs</h3>
+        <pre><span class="kw">column</span>(4,
+  <span class="kw">p</span>(<span class="st">"First paragraph..."</span>),
+  <span class="kw">p</span>(<span class="st">"Second paragraph..."</span>),  <span class="cm"># p() adds paragraph spacing</span>
+  <span class="kw">br</span>(),                       <span class="cm"># br() is a smaller blank line</span>
+  <span class="kw">p</span>(<span class="st">"Third paragraph..."</span>)
+)</pre>
+      </div>
+
+      <div class="card">
+        <h3>v5 — insert an image</h3>
+        <pre><span class="kw">img</span>(src = <span class="st">"plot1.png"</span>, width = <span class="st">"100%"</span>)</pre>
+        <p class="tip">Put the image inside <code style="font-family:'DM Mono',monospace;">ShinyApp/www/</code>. Shiny finds it automatically — just write the filename in <code style="font-family:'DM Mono',monospace;">src</code>, no path needed.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: PUBLISH -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Publish your app</h2>
+      <span class="tag tag-r">R</span>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-title"><span class="step-badge">step 1</span> Create a free account at shinyapps.io</div>
+        <div class="card-title" style="margin-top:12px;"><span class="step-badge">step 2</span> Install &amp; connect</div>
+        <pre><span class="kw">install.packages</span>(<span class="st">"rsconnect"</span>)
+
+<span class="cm"># Copy this from your shinyapps.io dashboard</span>
+rsconnect::<span class="kw">setAccountInfo</span>(
+  name   = <span class="st">"your-username"</span>,
+  token  = <span class="st">"xxxxxxxx"</span>,
+  secret = <span class="st">"xxxxxxxx"</span>
+)</pre>
+        <div class="card-title" style="margin-top:12px;"><span class="step-badge">step 3</span> Deploy</div>
+        <pre>rsconnect::<span class="kw">deployApp</span>()</pre>
+        <p class="tip">Or click the <strong>Publish</strong> button in RStudio (top right of app.R). Your app goes live at <code style="font-family:'DM Mono',monospace;">username.shinyapps.io/projectname</code></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- STEP 5: GIT WORKFLOW -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>Push your work to a branch</h2>
+      <span class="tag tag-git">Git</span>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <h3>Full branch workflow</h3>
+        <pre><span class="cm"># 1. Make sure main is up to date</span>
+git pull origin main
+
+<span class="cm"># 2. Create and switch to your branch</span>
+git checkout -b my-branch-name
+
+<span class="cm"># 3. After editing — stage and commit</span>
+git add .
+git commit -m <span class="st">"describe what you changed"</span>
+<span class="cm"># shortcut (only if no new files):</span>
+git commit -am <span class="st">"describe what you changed"</span>
+
+<span class="cm"># 4. Push branch to GitHub</span>
+git push origin my-branch-name</pre>
+        <div class="web-note" style="margin-top:10px;">
+          5. On GitHub: click <strong>"Compare &amp; pull request"</strong><br>
+          6. Click <strong>"Create pull request"</strong> → <strong>"Merge pull request"</strong> → <strong>"Confirm merge"</strong>
+        </div>
+        <pre style="margin-top:10px;"><span class="cm"># 7. Back in terminal — update your local main</span>
+git checkout main
+git pull origin main
+
+<span class="cm"># 8. Delete branch (optional)</span>
+git branch -d my-branch-name
+git push origin --delete my-branch-name</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6: CONFLICTS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>Handling conflicts</h2>
+      <span class="tag tag-git">Git</span>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <p style="font-size:14px;color:var(--ink2);line-height:1.7;margin-bottom:12px;">A conflict only happens when <strong style="color:var(--ink);">two people edited the exact same line</strong>. Git marks the conflict directly in your file:</p>
+        <pre><span class="cm">&lt;&lt;&lt;&lt;&lt;&lt;&lt; your-branch</span>
+plotOutput(<span class="st">"my_plot"</span>)      <span class="cm"># your version</span>
+<span class="cm">=======</span>
+plotOutput(<span class="st">"team_plot"</span>)    <span class="cm"># teammate's version</span>
+<span class="cm">&gt;&gt;&gt;&gt;&gt;&gt;&gt; main</span></pre>
+        <p style="font-size:13px;color:var(--ink2);margin:12px 0 8px;">To fix it — open the file, delete the markers, keep the correct version, then:</p>
+        <pre><span class="cm"># Pull main first (this is what triggers the conflict markers)</span>
+git pull origin main
+
+<span class="cm"># After editing the file manually</span>
+git add .
+git commit -m <span class="st">"resolve conflict"</span>
+git push origin my-branch-name</pre>
+        <div class="web-note" style="margin-top:8px;">Your existing Pull Request updates automatically — just go back and merge.</div>
+        <p class="tip" style="margin-top:10px;"><strong>Best prevention:</strong> each person owns different files. You do <code style="font-family:'DM Mono',monospace;">overview</code>, teammate does <code style="font-family:'DM Mono',monospace;">finding</code> — conflicts almost never happen.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- RESOURCES -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>Further resources</h2>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div>
+            <p style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:4px;">R Shiny Gallery</p>
+            <p style="font-size:13px;color:var(--ink2);margin-bottom:6px;">Browse real Shiny apps for inspiration and see the code behind them.</p>
+            <a href="https://shiny.posit.co/r/gallery/" style="font-family:'DM Mono',monospace;font-size:12px;color:#861F41;text-decoration:none;">shiny.posit.co/r/gallery/</a>
+          </div>
+          <div style="height:0.5px;background:var(--border);"></div>
+          <div>
+            <p style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:4px;">VT DSPG Program</p>
+            <p style="font-size:13px;color:var(--ink2);margin-bottom:6px;">Data Science for the Public Good — Virginia Tech AAEC.</p>
+            <a href="https://aaec.vt.edu/academics/undergraduate/dspg.html" style="font-family:'DM Mono',monospace;font-size:12px;color:#861F41;text-decoration:none;">aaec.vt.edu/academics/undergraduate/dspg.html</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Virginia Tech · Git + R Shiny · Yuanyuan Wen</footer>
+</div>
+</body>
+</html>
